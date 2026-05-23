@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LynxMetrics CDN</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0b0f19;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            border: 1px solid #1e293b;
+            padding: 3rem 2.5rem;
+            border-radius: 12px;
+            background-color: #0f172a;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        .logo-icon {
+            width: 72px;
+            height: 72px;
+        }
+        h1 {
+            font-size: 1.625rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            color: #ffffff;
+            letter-spacing: -0.025em;
+        }
+        p {
+            font-size: 0.9375rem;
+            color: #94a3b8;
+            margin: 0 0 2rem 0;
+            line-height: 1.5;
+        }
+        .status {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #10b981;
+            background-color: rgba(16, 185, 129, 0.1);
+            padding: 0.375rem 1rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <svg class="logo-icon" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="lynxGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#8b5cf6" />
+                        <stop offset="100%" stop-color="#4c1d95" />
+                    </linearGradient>
+                </defs>
+                <!-- Fundo Circular Moderno com Gradiente -->
+                <rect width="120" height="120" rx="28" fill="url(#lynxGrad1)" />
+                <!-- Orelha esquerda com tufo -->
+                <path d="M 40,65 L 42,25 Q 42,15 39,12 Q 43,15 45,28 L 52,60" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Orelha direita com tufo -->
+                <path d="M 80,65 L 78,25 Q 78,15 81,12 Q 77,15 75,28 L 68,60" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Detalhe interno das orelhas -->
+                <path d="M 45,35 L 47,58 M 75,35 L 73,58" stroke="#ddd6fe" stroke-width="3" stroke-linecap="round"/>
+                <!-- Rosto central -->
+                <path d="M 32,70 Q 30,85 50,98 Q 60,105 70,98 Q 90,85 88,70" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Linhas do focinho e testa -->
+                <path d="M 52,60 Q 60,56 68,60 L 68,78 Q 68,84 60,86 Q 52,84 52,78 Z" fill="#ffffff" opacity="0.15" stroke="#ffffff" stroke-width="3.5" stroke-linejoin="round"/>
+                <!-- Olhos -->
+                <path d="M 42,68 Q 48,65 52,72" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+                <path d="M 78,68 Q 72,65 68,72" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+                <!-- Focinho -->
+                <path d="M 56,80 L 64,80 L 60,84 Z" fill="#ffffff" />
+            </svg>
+        </div>
+        <h1>LynxMetrics CDN</h1>
+        <p>High-performance static distribution network for tracking assets.</p>
+        <span class="status">
+            <span class="status-dot"></span>
+            Operational
+        </span>
+    </div>
+</body>
+</html>
