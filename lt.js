@@ -8,6 +8,9 @@
     const scriptUrl = new URL(script.src);
     const apiBase = scriptUrl.origin;
 
+    const adminKey = `_lx_${site.slice(-6)}`;
+    const adminVal = localStorage.getItem(adminKey) || null;
+
     fetch(`${apiBase}/api/v1/track/pageview`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -15,7 +18,8 @@
         body: JSON.stringify({
             site: site.toLowerCase(),
             url: window.location.pathname + window.location.search,
-            referrer: document.referrer || null
+            referrer: document.referrer || null,
+            admin: adminVal
         })
     }).catch(err => console.warn('[LynxMetrics] Error:', err.message));
 
@@ -30,7 +34,8 @@
                     site: site.toLowerCase(),
                     event_name: 'click',
                     element_id: target.id,
-                    url: window.location.pathname + window.location.search
+                    url: window.location.pathname + window.location.search,
+                    admin: adminVal
                 })
             }).catch(err => console.warn('[LynxMetrics] Error:', err.message));
         }
