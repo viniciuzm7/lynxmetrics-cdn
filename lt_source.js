@@ -5,7 +5,7 @@
     const siteId = script.getAttribute('data-site');
     if (!siteId) return;
 
-    const endpoint = 'https://t.lynxmetrics.com/api/v1/track';
+    const endpoint = 'https://t.lynxmetrics.com/api/v1/event';
     const adminKey = siteId.slice(-6);
     const adminToken = localStorage.getItem(adminKey) || null;
 
