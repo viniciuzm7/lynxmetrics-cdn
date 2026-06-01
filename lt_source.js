@@ -13,14 +13,17 @@
     let lastUrl = window.location.pathname + window.location.search;
 
     const sendPayload = (payload) => {
+        const dataObj = { pageId: currentPageId, ...payload };
+        if (adminToken) {
+            dataObj.adminToken = adminToken;
+        }
         fetch(endpoint, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'x-lynx-admin': adminToken || ''
+                'Content-Type': 'text/plain'
             },
             mode: 'cors',
-            body: JSON.stringify({ pageId: currentPageId, ...payload })
+            body: JSON.stringify(dataObj)
         }).catch(() => {});
     };
 
@@ -28,22 +31,27 @@
 
     const sendDuration = () => {
         const durationSecs = (performance.now() - sessionStartTime) / 1000;
-        if (durationSecs > 0) {
-            const data = JSON.stringify({
+        if (durationSecs >= 1) {
+            const dataObj = {
                 type: 'duration',
                 site: siteId.toLowerCase(),
                 duration: Number(durationSecs.toFixed(3)),
                 url: lastUrl,
                 pageId: currentPageId
-            });
+            };
+            if (adminToken) {
+                dataObj.adminToken = adminToken;
+            }
+            const data = JSON.stringify(dataObj);
+
             if (navigator.sendBeacon) {
-                navigator.sendBeacon(endpoint, data);
+                const blob = new Blob([data], { type: 'text/plain' });
+                navigator.sendBeacon(endpoint, blob);
             } else {
                 fetch(endpoint, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'x-lynx-admin': adminToken || ''
+                        'Content-Type': 'text/plain'
                     },
                     mode: 'cors',
                     keepalive: true,
