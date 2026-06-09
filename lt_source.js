@@ -28,10 +28,13 @@
     };
 
     let sessionStartTime = performance.now();
+    let initialTimer = null;
+    let periodicTimer = null;
 
     const sendDuration = () => {
-        const durationSecs = (performance.now() - sessionStartTime) / 1000;
-        if (durationSecs >= 1) {
+        const now = performance.now();
+        const durationSecs = (now - sessionStartTime) / 1000;
+        if (durationSecs >= 0.2) {
             const dataObj = {
                 type: 'duration',
                 site: siteId.toLowerCase(),
@@ -58,7 +61,24 @@
                     body: data
                 }).catch(() => {});
             }
+            sessionStartTime = now;
         }
+    };
+
+    const startTimers = () => {
+        if (initialTimer) clearTimeout(initialTimer);
+        if (periodicTimer) clearInterval(periodicTimer);
+        sessionStartTime = performance.now();
+        initialTimer = setTimeout(() => {
+            if (document.visibilityState === 'visible') {
+                sendDuration();
+            }
+            periodicTimer = setInterval(() => {
+                if (document.visibilityState === 'visible') {
+                    sendDuration();
+                }
+            }, 15000);
+        }, 1000);
     };
 
     window.addEventListener('visibilitychange', () => {
@@ -81,10 +101,12 @@
 
     if (document.visibilityState === 'visible') {
         trackPageview();
+        startTimers();
     } else {
         const onVisible = function () {
             if (document.visibilityState === 'visible') {
                 trackPageview();
+                startTimers();
                 document.removeEventListener('visibilitychange', onVisible);
             }
         };
@@ -122,8 +144,8 @@
         if (currentUrl !== lastUrl) {
             sendDuration();
             currentPageId = Math.random().toString(36).substring(2, 15);
-            sessionStartTime = performance.now();
             trackPageview();
+            startTimers();
         }
     };
 
