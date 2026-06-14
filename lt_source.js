@@ -1,12 +1,15 @@
 !(function () {
-    const script = document.currentScript;
+    let script = document.currentScript;
+    if (!script) {
+        script = document.querySelector('script[data-site][src*="/lt"]');
+    }
     if (!script) return;
 
     const siteId = script.getAttribute('data-site');
     if (!siteId) return;
 
     const endpoint = 'https://t.lynxmetrics.com/api/v1/event';
-    const adminKey = siteId.slice(-6);
+    const adminKey = 'lynx_admin_' + siteId.slice(-6);
     const adminToken = localStorage.getItem(adminKey) || null;
 
     let currentPageId = Math.random().toString(36).substring(2, 15);
@@ -65,9 +68,19 @@
         }
     };
 
+    const stopTimers = () => {
+        if (initialTimer) {
+            clearTimeout(initialTimer);
+            initialTimer = null;
+        }
+        if (periodicTimer) {
+            clearInterval(periodicTimer);
+            periodicTimer = null;
+        }
+    };
+
     const startTimers = () => {
-        if (initialTimer) clearTimeout(initialTimer);
-        if (periodicTimer) clearInterval(periodicTimer);
+        stopTimers();
         sessionStartTime = performance.now();
         initialTimer = setTimeout(() => {
             if (document.visibilityState === 'visible') {
@@ -84,8 +97,10 @@
     window.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'hidden') {
             sendDuration();
+            stopTimers();
         } else {
             sessionStartTime = performance.now();
+            startTimers();
         }
     });
 
@@ -113,6 +128,14 @@
         document.addEventListener('visibilitychange', onVisible);
     }
 
+    const isInteractive = (node) => {
+        if (!node) return false;
+        const tagName = node.tagName.toLowerCase();
+        if (['a', 'button', 'input', 'select', 'textarea'].includes(tagName)) return true;
+        if (node.getAttribute('role') === 'button') return true;
+        return false;
+    };
+
     document.addEventListener('click', (e) => {
         const lynxNode = e.target.closest('[data-lynx-event]');
         if (lynxNode) {
@@ -127,7 +150,7 @@
             }
         } else {
             const idNode = e.target.closest('[id]');
-            if (idNode && idNode.id) {
+            if (idNode && idNode.id && isInteractive(idNode)) {
                 sendPayload({
                     type: 'event',
                     site: siteId.toLowerCase(),
