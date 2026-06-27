@@ -12,9 +12,6 @@
     const adminKey = 'lynx_admin_' + siteId.slice(-6);
     const adminToken = localStorage.getItem(adminKey) || null;
 
-    let currentPageId = Math.random().toString(36).substring(2, 15);
-    let lastUrl = window.location.pathname + window.location.search;
-
     const getSessionId = () => {
         let sid = localStorage.getItem('lynx_session_id');
         let stime = localStorage.getItem('lynx_session_time');
@@ -26,6 +23,9 @@
         localStorage.setItem('lynx_session_time', now.toString());
         return sid;
     };
+
+    let currentPageId = getSessionId() + '_' + Math.random().toString(36).substring(2, 10);
+    let lastUrl = window.location.pathname + window.location.search;
 
     const sendPayload = (payload) => {
         const dataObj = { pageId: currentPageId, sessionId: getSessionId(), ...payload };
@@ -103,7 +103,7 @@
                 if (document.visibilityState === 'visible') {
                     sendDuration();
                 }
-            }, 15000);
+            }, 30000);
         }, 1000);
     };
 
@@ -180,7 +180,7 @@
         const currentUrl = window.location.pathname + window.location.search;
         if (currentUrl !== lastUrl) {
             sendDuration();
-            currentPageId = Math.random().toString(36).substring(2, 15);
+            currentPageId = getSessionId() + '_' + Math.random().toString(36).substring(2, 10);
             trackPageview();
             startTimers();
         }
