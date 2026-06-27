@@ -15,8 +15,20 @@
     let currentPageId = Math.random().toString(36).substring(2, 15);
     let lastUrl = window.location.pathname + window.location.search;
 
+    const getSessionId = () => {
+        let sid = localStorage.getItem('lynx_session_id');
+        let stime = localStorage.getItem('lynx_session_time');
+        const now = Date.now();
+        if (!sid || !stime || (now - parseInt(stime, 10)) > 30 * 60 * 1000) {
+            sid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            localStorage.setItem('lynx_session_id', sid);
+        }
+        localStorage.setItem('lynx_session_time', now.toString());
+        return sid;
+    };
+
     const sendPayload = (payload) => {
-        const dataObj = { pageId: currentPageId, ...payload };
+        const dataObj = { pageId: currentPageId, sessionId: getSessionId(), ...payload };
         if (adminToken) {
             dataObj.adminToken = adminToken;
         }
@@ -43,7 +55,8 @@
                 site: siteId.toLowerCase(),
                 duration: Number(durationSecs.toFixed(3)),
                 url: lastUrl,
-                pageId: currentPageId
+                pageId: currentPageId,
+                sessionId: getSessionId()
             };
             if (adminToken) {
                 dataObj.adminToken = adminToken;
@@ -110,7 +123,8 @@
             type: 'pageview',
             site: siteId.toLowerCase(),
             url: lastUrl,
-            referrer: document.referrer || null
+            referrer: document.referrer || null,
+            screen: window.screen.width + 'x' + window.screen.height
         });
     };
 
