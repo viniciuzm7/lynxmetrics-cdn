@@ -10,8 +10,6 @@
 
     const configuredHost = script.getAttribute('data-host');
     const endpoint = (configuredHost ? configuredHost.replace(/\/+$/, '') : 'https://t.lynxmetrics.com') + '/api/v1/event';
-    const adminKey = 'lynx_admin_' + siteId.slice(-6);
-    const adminToken = localStorage.getItem(adminKey) || null;
 
     const getSessionId = () => {
         let sid = localStorage.getItem('lynx_session_id');
@@ -30,9 +28,6 @@
 
     const sendPayload = (payload) => {
         const dataObj = { pageId: currentPageId, sessionId: getSessionId(), ...payload };
-        if (adminToken) {
-            dataObj.adminToken = adminToken;
-        }
         fetch(endpoint, {
             method: 'POST',
             headers: {
@@ -59,9 +54,6 @@
                 pageId: currentPageId,
                 sessionId: getSessionId()
             };
-            if (adminToken) {
-                dataObj.adminToken = adminToken;
-            }
             const data = JSON.stringify(dataObj);
 
             if (navigator.sendBeacon) {
