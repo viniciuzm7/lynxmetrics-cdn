@@ -143,14 +143,6 @@
         document.addEventListener('visibilitychange', onVisible);
     }
 
-    const isInteractive = (node) => {
-        if (!node) return false;
-        const tagName = node.tagName.toLowerCase();
-        if (['a', 'button', 'input', 'select', 'textarea'].includes(tagName)) return true;
-        if (node.getAttribute('role') === 'button') return true;
-        return false;
-    };
-
     const downloadExtRegex = /\.(pdf|zip|rar|7z|dmg|exe|pkg|deb|rpm|csv|xlsx?|docx?|pptx?|mp3|mp4|mov|avi|json|txt)(\?|#|$)/i;
 
     document.addEventListener('click', (e) => {
@@ -194,33 +186,6 @@
                     });
                 }
             }
-        }
-
-        if (!lynxNode) {
-            const idNode = e.target.closest('[id]');
-            if (idNode && idNode.id && isInteractive(idNode)) {
-                sendPayload({
-                    type: 'event',
-                    site: siteId.toLowerCase(),
-                    eventName: 'click',
-                    elementId: idNode.id,
-                    url: lastUrl
-                });
-            }
-        }
-    }, true);
-
-    document.addEventListener('submit', (e) => {
-        const form = e.target;
-        if (form && form.tagName && form.tagName.toLowerCase() === 'form') {
-            const label = form.id || form.getAttribute('name') || form.getAttribute('action') || 'form';
-            sendPayload({
-                type: 'event',
-                site: siteId.toLowerCase(),
-                eventName: 'form_submit',
-                elementId: label.substring(0, 256),
-                url: lastUrl
-            });
         }
     }, true);
 
