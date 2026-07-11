@@ -8,7 +8,8 @@
     const siteId = script.getAttribute('data-site');
     if (!siteId) return;
 
-    const endpoint = 'https://t.lynxmetrics.com/api/v1/event';
+    const configuredHost = script.getAttribute('data-host');
+    const endpoint = (configuredHost ? configuredHost.replace(/\/+$/, '') : 'https://t.lynxmetrics.com') + '/api/v1/event';
     const adminKey = 'lynx_admin_' + siteId.slice(-6);
     const adminToken = localStorage.getItem(adminKey) || null;
 
@@ -150,6 +151,8 @@
         return false;
     };
 
+    const downloadExtRegex = /\.(pdf|zip|rar|7z|dmg|exe|pkg|deb|rpm|csv|xlsx?|docx?|pptx?|mp3|mp4|mov|avi|json|txt)(\?|#|$)/i;
+
     document.addEventListener('click', (e) => {
         const lynxNode = e.target.closest('[data-lynx-event]');
         if (lynxNode) {
@@ -162,7 +165,38 @@
                     url: lastUrl
                 });
             }
-        } else {
+        }
+
+        const anchor = e.target.closest('a[href]');
+        if (anchor) {
+            let href = null;
+            try {
+                href = new URL(anchor.href, window.location.href);
+            } catch (err) {
+                href = null;
+            }
+            if (href && /^https?:$/.test(href.protocol)) {
+                if (href.hostname !== window.location.hostname) {
+                    sendPayload({
+                        type: 'event',
+                        site: siteId.toLowerCase(),
+                        eventName: 'outbound_link',
+                        elementId: href.href.substring(0, 256),
+                        url: lastUrl
+                    });
+                } else if (downloadExtRegex.test(href.pathname)) {
+                    sendPayload({
+                        type: 'event',
+                        site: siteId.toLowerCase(),
+                        eventName: 'file_download',
+                        elementId: href.href.substring(0, 256),
+                        url: lastUrl
+                    });
+                }
+            }
+        }
+
+        if (!lynxNode) {
             const idNode = e.target.closest('[id]');
             if (idNode && idNode.id && isInteractive(idNode)) {
                 sendPayload({
@@ -173,6 +207,20 @@
                     url: lastUrl
                 });
             }
+        }
+    }, true);
+
+    document.addEventListener('submit', (e) => {
+        const form = e.target;
+        if (form && form.tagName && form.tagName.toLowerCase() === 'form') {
+            const label = form.id || form.getAttribute('name') || form.getAttribute('action') || 'form';
+            sendPayload({
+                type: 'event',
+                site: siteId.toLowerCase(),
+                eventName: 'form_submit',
+                elementId: label.substring(0, 256),
+                url: lastUrl
+            });
         }
     }, true);
 
