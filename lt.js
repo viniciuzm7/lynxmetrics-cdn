@@ -135,8 +135,6 @@
         document.addEventListener('visibilitychange', onVisible);
     }
 
-    const downloadExtRegex = /\.(pdf|zip|rar|7z|dmg|exe|pkg|deb|rpm|csv|xlsx?|docx?|pptx?|mp3|mp4|mov|avi|json|txt)(\?|#|$)/i;
-
     document.addEventListener('click', (e) => {
         const lynxNode = e.target.closest('[data-lynx-event]');
         if (lynxNode) {
@@ -159,24 +157,14 @@
             } catch (err) {
                 href = null;
             }
-            if (href && /^https?:$/.test(href.protocol)) {
-                if (href.hostname !== window.location.hostname) {
-                    sendPayload({
-                        type: 'event',
-                        site: siteId.toLowerCase(),
-                        eventName: 'outbound_link',
-                        elementId: href.href.substring(0, 256),
-                        url: lastUrl
-                    });
-                } else if (downloadExtRegex.test(href.pathname)) {
-                    sendPayload({
-                        type: 'event',
-                        site: siteId.toLowerCase(),
-                        eventName: 'file_download',
-                        elementId: href.href.substring(0, 256),
-                        url: lastUrl
-                    });
-                }
+            if (href && /^https?:$/.test(href.protocol) && href.hostname !== window.location.hostname) {
+                sendPayload({
+                    type: 'event',
+                    site: siteId.toLowerCase(),
+                    eventName: 'outbound_link',
+                    elementId: href.href.substring(0, 256),
+                    url: lastUrl
+                });
             }
         }
     }, true);
